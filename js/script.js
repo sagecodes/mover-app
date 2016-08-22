@@ -22,9 +22,29 @@ function loadData() {
 
     $body.append('<img class="bgimg" src="' + streetviewUrl + '">');
 
-    return false;
-};
 
+
+// Find NYTIMES Articles:
+    // Add your API key to end of nytimesUrl if needed '&api-key=Your_API_Key'
+    var nytimesUrl = 'http://api.nytimes.com/svc/search/v2/articlesearch.json?q=' + cityStr + '&sort=newest';
+    $.getJSON(nytimesUrl, function(data){
+
+        $nytHeaderElem.text('New York Times Articles About ' + cityStr);
+
+        articles = data.response.docs;
+        for (var i = 0; i < articles.length; i++) {
+            var article = articles[i];
+            $nytElem.append('<li class="article">'+
+                '<a href="'+article.web_url+'">'+article.headline.main+'</a>'+
+                '<p>' + article.snippet + '</p>'+
+            '</li>');
+        };
+
+    }).error(function(e){
+        $nytHeaderElem.text('New York Times Articles Could Not Be Loaded');
+    });
+
+return false;
+};
 $('#form-container').submit(loadData);
 
-// loadData();
